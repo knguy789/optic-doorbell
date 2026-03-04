@@ -24,6 +24,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.ui.viewinterop.AndroidView
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,18 +106,55 @@ fun HomeScreen(onStart: () -> Unit) {
 }
 
 @Composable
-fun DoorbellScreen() {
+fun DoorbellScreen(onNavigateBack: () -> Unit = {}) {
+    val context = LocalContext.current
     var statusText by remember { mutableStateOf("Idle") }
-
-    val esp32CamUrl = "http://192.168.1.100/stream"
-
+    val streamUrl = "http://192.168.1.100/stream"  // Change to your ESP32/Pi IP
+    val webInterfaceUrl = "http://192.168.1.100"   // Main ESP32 web page
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Video Stream Placeholder
+        // Simple test text
+        Text(
+            text = "OPTIC DOORBELL",
+            color = Color.White,
+            fontSize = 28.sp
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+//            text = "Link..................",
+//            color = Color(0xFFFFD700),
+//            fontSize = 20.sp
+            text = "Link..................",
+            color = Color(0xFFFFD700),
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    // Opens ESP32-CAM web interface in browser
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(webInterfaceUrl))
+                    context.startActivity(intent)
+                }
+                .padding(vertical = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Live Video Feed",
+            color = Color(0xFF9370DB),
+            fontSize = 24.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,47 +162,67 @@ fun DoorbellScreen() {
                 .background(Color.DarkGray),
             contentAlignment = Alignment.Center
         ) {
-            AndroidView(
-                factory = { context ->
-                    WebView(context).apply {
-                        // settings.javaScriptEnabled = true
-                        settings.loadWithOverviewMode = true
-                        settings.useWideViewPort = true
-                        webViewClient = WebViewClient()
-                        loadUrl(esp32CamUrl)
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
+            Text(
+                text = "Video will appear here",
+                color = Color.White
             )
-//            Text(
-//                text = "Live Camera Feed",
-//                color = Color.White
-//            )
         }
+
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Status Indicator
         Text(
             text = "Status: $statusText",
             color = Color.White,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodyMedium
         )
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(onClick = { statusText = "Refreshing..."}) {
-                Text("Refresh")
-            }
-            Button(onClick = { statusText = "Person Detected"}) {
-                Text("Test Person")
-            }
-            Button(onClick = { statusText = "Package Detected"}) {
-                Text("Test Package")
-            }
-        }
     }
 }
+
+//@Composable
+//fun DoorbellScreen() {
+//    var statusText by remember { mutableStateOf("Idle") }
+//
+//    val esp32CamUrl = "http://192.168.1.100/stream"
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.Black)
+//            .padding(16.dp)
+//    ) {
+//        // Video Stream Placeholder
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(1f)
+//                .background(Color.DarkGray),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            AndroidView(
+//                factory = { context ->
+//                    WebView(context).apply {
+//                        // settings.javaScriptEnabled = true
+//                        settings.loadWithOverviewMode = true
+//                        settings.useWideViewPort = true
+//                        webViewClient = WebViewClient()
+//                        loadUrl(esp32CamUrl)
+//                    }
+//                },
+//                modifier = Modifier.fillMaxSize()
+//            )
+////            Text(
+////                text = "Live Camera Feed",
+////                color = Color.White
+////            )
+//        }
+//        Spacer(modifier = Modifier.height(12.dp))
+//
+//        // Status Indicator
+//        Text(
+//            text = "Status: $statusText",
+//            color = Color.White,
+//            style = MaterialTheme.typography.titleMedium
+//        )
+//        Spacer(modifier = Modifier.height(12.dp))
+//    }
+// }
